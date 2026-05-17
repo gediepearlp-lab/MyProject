@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Inventory Items{% endblock %}
+{% block topbar_title %}Inventory Items{% endblock %}
+
+{% block content %}
+{% include "include/ToastMessage.html" %}
+<div class="panel mb-4" style="padding:20px;">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-sm-5">
+      <label class="form-label">Search</label>
+      <input name="q" value="{{ query }}" class="form-control" placeholder="Item name or SKU…">
+    </div>
+    <div class="col-6 col-sm-3">
+      <label class="form-label">Category</label>
+      <select name="category" class="form-select">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat.pk }}" {% if selected_category == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-sm-2">
+      <label class="form-label">Status</label>
+      <select name="status" class="form-select">
+        <option value="">All</option>
+        <option value="in_stock" {% if selected_status == 'in_stock' %}selected{% endif %}>In Stock</option>
+        <option value="low_stock" {% if selected_status == 'low_stock' %}selected{% endif %}>Low Stock</option>
+        <option value="out_of_stock" {% if selected_status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+      </select>
+    </div>
+    <div class="col-12 col-sm-2 d-flex gap-2">
+      <button type="submit" class="btn-brew" style="flex:1;justify-content:center;"><i class="bi bi-search"></i></button>
+      <a href="{% url 'item_list' %}" class="btn-brew outline" style="padding:10px 12px;"><i class="bi bi-x"></i></a>
+    </div>
+  </form>
+</div>
+
+<div class="section-header">
+  <h2>Items <span style="font-size:1rem; font-weight:400; opacity:.5;">({{ items|length }})</span></h2>
+  <a href="{% url 'item_create' %}" class="btn-brew"><i class="bi bi-plus-lg"></i> Add Item</a>
+</div>
+
+<div class="panel">
+  {% if items %}
+  <div style="overflow-x:auto;">
+    <table class="brew-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Quantity</th>
+          <th>Reorder At</th>
+          <th>Unit Cost</th>
+          <th>Total Value</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>
+            <a href="{% url 'item_detail' item.pk %}" style="font-weight:600; color:var(--espresso); text-decoration:none;">
+              {{ item.name }}
+            </a>
+            {% if item.supplier %}<br><small style="opacity:.45;">{{ item.supplier.name }}</small>{% endif %}
+          </td>
+          <td><code style="font-size:.8rem; background:var(--foam); padding:2px 6px; border-radius:4px;">{{ item.sku }}</code></td>
+          <td>{{ item.category.name }}</td>
+          <td>{{ item.quantity }} <span style="opacity:.5; font-size:.8rem;">{{ item.unit }}</span></td>
+          <td style="opacity:.6;">{{ item.reorder_level }} {{ item.unit }}</td>
+          <td>₱{{ item.cost_price }}</td>
+          <td>₱{{ item.total_value|floatformat:2 }}</td>
+          <td>
+            <span class="badge-status {{ item.status }}">
+              <i class="bi bi-circle-fill" style="font-size:.45rem;"></i>
+              {% if item.status == 'in_stock' %}In Stock
+              {% elif item.status == 'low_stock' %}Low Stock
+              {% else %}Out of Stock{% endif %}
+            </span>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <a href="{% url 'add_transaction' item.pk %}" class="btn-brew sm" title="Update Stock"><i class="bi bi-arrow-repeat"></i></a>
+              <a href="{% url 'item_edit' item.pk %}" class="btn-brew sm outline" title="Edit"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'item_delete' item.pk %}" class="btn-brew sm danger" title="Delete"><i class="bi bi-trash"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="padding:60px; text-align:center; opacity:.4;">
+    <i class="bi bi-box-seam" style="font-size:3rem; display:block; margin-bottom:12px;"></i>
+    <p>No items found. <a href="{% url 'item_create' %}">Add your first item</a></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

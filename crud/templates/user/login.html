@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<style>
+  .auth-wrap {
+    min-height: 100vh;
+    display: flex;
+    background: var(--espresso);
+  }
+  .auth-left {
+    flex: 1;
+    display: none;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8956c' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    color: var(--cream);
+  }
+  @media(min-width:900px) { .auth-left { display: flex; flex-direction: column; } }
+  .auth-left h2 { font-family: 'Playfair Display',serif; font-size: 3rem; font-weight:900; color: var(--latte); line-height:1.1; }
+  .auth-left p { opacity:.6; margin-top:12px; max-width:360px; }
+  .auth-right {
+    width: 100%; max-width: 480px;
+    background: var(--foam);
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px 40px;
+  }
+  .auth-box { width: 100%; }
+  .auth-logo { font-family: 'Playfair Display',serif; font-size:1.8rem; font-weight:900; color: var(--espresso); margin-bottom: 8px; }
+  .auth-sub { font-size:.88rem; color: rgba(26,15,0,.5); margin-bottom:32px; }
+  .auth-link { color: var(--latte); text-decoration: none; font-weight:600; }
+  .auth-link:hover { color: var(--roast); }
+  .btn-login {
+    width: 100%; padding: 13px;
+    background: var(--espresso); color: var(--cream);
+    border: none; border-radius: 10px;
+    font-family: 'DM Sans',sans-serif; font-size:.95rem; font-weight:600;
+    cursor: pointer; transition: background .2s;
+  }
+  .btn-login:hover { background: var(--roast); }
+</style>
+
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div>
+      <div style="font-size:4rem; margin-bottom:24px;">☕</div>
+      <h2>Manage your coffee shop and smile everyday.</h2>
+      <p>"I like my coffee like I like my days: dark and unpredictable."</p>
+      <div style="margin-top:40px; display:flex; gap:32px; opacity:.5; font-size:.85rem;">
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-logo">☕ KAPE TA</div>
+      <div class="auth-sub">Coffee Shop that makes your heart smiles!</div>
+
+      <h3 style="font-weight:700; margin-bottom:24px; font-size:1.3rem;">Sign In</h3>
+
+      {% for message in messages %}
+        <div class="alert alert-danger mb-3" style="border-radius:8px; font-size:.85rem;">{{ message }}</div>
+      {% endfor %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          {{ form.username }}
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Password</label>
+          {{ form.password }}
+        </div>
+        <button type="submit" class="btn-login">Sign In →</button>
+      </form>
+
+      <p style="text-align:center; margin-top:24px; font-size:.85rem; opacity:.7;">
+        No account? <a href="{% url 'register' %}" class="auth-link">Create one</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

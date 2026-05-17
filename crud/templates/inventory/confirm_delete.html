@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Delete{% endblock %}
+{% block topbar_title %}Confirm Delete{% endblock %}
+
+{% block content %}
+{% include "include/ToastMessage.html" %}
+<div class="form-card" style="max-width:480px; text-align:center;">
+  <div style="font-size:3rem; margin-bottom:16px;">🗑️</div>
+  <h2 style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:8px;">Delete {{ type|title }}?</h2>
+  <p style="opacity:.65; font-size:.9rem; margin-bottom:28px;">
+    Are you sure you want to delete <strong>{{ object }}</strong>? This action cannot be undone.
+  </p>
+  <form method="post" class="d-flex gap-3 justify-content-center">
+    {% csrf_token %}
+    <button type="submit" class="btn-brew danger"><i class="bi bi-trash"></i> Yes, Delete</button>
+    <a href="javascript:history.back()" class="btn-brew outline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

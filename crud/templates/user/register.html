@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<style>
+  .auth-wrap { min-height:100vh; display:flex; background:var(--espresso); }
+  .auth-right { width:100%; max-width:520px; background:var(--foam); display:flex; align-items:center; justify-content:center; padding:48px 40px; margin:0 auto; }
+  .auth-logo { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; color:var(--espresso); margin-bottom:8px; }
+  .btn-login { width:100%; padding:13px; background:var(--espresso); color:var(--cream); border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; transition:background .2s; }
+  .btn-login:hover { background:var(--roast); }
+  .auth-link { color:var(--latte); text-decoration:none; font-weight:600; }
+</style>
+
+<div class="auth-wrap" style="justify-content:center;">
+  <div class="auth-right">
+    <div style="width:100%;">
+      <div class="auth-logo">☕ BrewStock</div>
+      <p style="font-size:.88rem; color:rgba(26,15,0,.5); margin-bottom:28px;">Create your account</p>
+
+      <h3 style="font-weight:700; margin-bottom:24px; font-size:1.3rem;">Register</h3>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger mb-3" style="border-radius:8px; font-size:.85rem;">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="form-label">First Name</label>
+            {{ form.first_name }}
+          </div>
+          <div class="col-6">
+            <label class="form-label">Last Name</label>
+            {{ form.last_name }}
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}<small class="text-danger">{{ form.username.errors|join:", " }}</small>{% endif %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          {{ form.email }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          {{ form.password }}
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Confirm Password</label>
+          {{ form.password2 }}
+        </div>
+        <button type="submit" class="btn-login">Create Account →</button>
+      </form>
+
+      <p style="text-align:center; margin-top:20px; font-size:.85rem; opacity:.7;">
+        Already have an account? <a href="{% url 'login' %}" class="auth-link">Sign In</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
