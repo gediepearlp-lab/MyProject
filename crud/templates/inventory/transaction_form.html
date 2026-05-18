@@ -1,18 +1,43 @@
 {% extends 'base.html' %}
 {% block title %}Update Stock — {{ item.name }}{% endblock %}
 {% block topbar_title %}Update Stock{% endblock %}
-{% include "include/ToastMessage.html" %}
 
 {% block content %}
+{% include "include/ToastMessage.html" %}
+
 <div class="mb-3">
-  <a href="{% url 'item_detail' item.pk %}" class="btn-brew outline sm"><i class="bi bi-arrow-left"></i> Back</a>
+  <a href="{% url 'item_detail' item.pk %}" class="btn-brew outline sm">
+    <i class="bi bi-arrow-left"></i> Back
+  </a>
 </div>
 
 <div class="form-card">
-  <h2 style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:4px;">Update Stock</h2>
-  <p style="opacity:.55; font-size:.88rem; margin-bottom:24px;">
-    Item: <strong>{{ item.name }}</strong> &nbsp;|&nbsp; Current Qty: <strong>{{ item.quantity }} {{ item.unit }}</strong>
-  </p>
+
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;
+              padding:16px;background:var(--foam);border-radius:12px;border:1px solid var(--steam);">
+    {% if item.image %}
+      <img src="{{ item.image.url }}" alt="{{ item.name }}"
+           width="56" height="56"
+           style="object-fit:cover;border-radius:10px;flex-shrink:0;border:2px solid var(--steam);">
+    {% else %}
+      <div style="width:56px;height:56px;background:var(--steam);border-radius:10px;
+                  display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.5;">
+        <i class="bi bi-box-seam" style="font-size:1.3rem;"></i>
+      </div>
+    {% endif %}
+    <div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin:0 0 2px;">
+        {{ item.name }}
+      </h2>
+      <p style="opacity:.55;font-size:.88rem;margin:0;">
+        Current Qty: <strong>{{ item.quantity }} {{ item.unit }}</strong>
+        &nbsp;|&nbsp;
+        <code style="font-size:.8rem;">{{ item.sku }}</code>
+      </p>
+    </div>
+  </div>
+
+  <h3 style="font-size:1rem;font-weight:600;margin-bottom:20px;">Update Stock</h3>
 
   <form method="post">
     {% csrf_token %}
@@ -20,7 +45,9 @@
     <div class="mb-3">
       <label class="form-label">{{ field.label }}</label>
       {{ field }}
-      {% if field.errors %}<small class="text-danger">{{ field.errors|join:", " }}</small>{% endif %}
+      {% if field.errors %}
+        <small class="text-danger">{{ field.errors|join:", " }}</small>
+      {% endif %}
     </div>
     {% endfor %}
     <div class="d-flex gap-3 mt-4">
@@ -28,5 +55,6 @@
       <a href="{% url 'item_detail' item.pk %}" class="btn-brew outline">Cancel</a>
     </div>
   </form>
+
 </div>
 {% endblock %}

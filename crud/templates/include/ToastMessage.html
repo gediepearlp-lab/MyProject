@@ -1,51 +1,123 @@
-{% load static %}
 {% if messages %}
-{% for message in messages %}
 
-    {% if message.tags == 'success' %}
-    <div id="toast-{{ forloop.counter }}" class="flex ml-64 mt-16 items-center w-full z-60 max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm" role="alert">
-        <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-            </svg>
+<div class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+
+    {% for message in messages %}
+
+    <div
+        id="toast-{{ forloop.counter }}"
+        class="
+            toast-message
+            flex items-center gap-3
+            min-w-75
+            max-w-100
+            px-4 py-3
+            rounded-xl
+            shadow-xl
+            border
+            backdrop-blur-md
+            animate-toast
+            {% if message.tags == 'success' %}
+                bg-green-50 border-green-200 text-green-800
+            {% elif message.tags == 'error' %}
+                bg-red-50 border-red-200 text-red-800
+            {% elif message.tags == 'warning' %}
+                bg-yellow-50 border-yellow-200 text-yellow-800
+            {% else %}
+                bg-white border-gray-200 text-gray-800
+            {% endif %}
+        "
+    >
+        <div class="shrink-0">
+
+            {% if message.tags == 'success' %}
+                <i class="bi bi-check-circle-fill text-green-500 text-lg"></i>
+
+            {% elif message.tags == 'error' %}
+                <i class="bi bi-x-circle-fill text-red-500 text-lg"></i>
+
+            {% elif message.tags == 'warning' %}
+                <i class="bi bi-exclamation-triangle-fill text-yellow-500 text-lg"></i>
+
+            {% else %}
+                <i class="bi bi-info-circle-fill text-gray-500 text-lg"></i>
+            {% endif %}
+
         </div>
-        <div class="ms-3 text-sm font-normal">{{ message }}</div>
-        <button type="button" onclick="this.closest('div[id^=toast]').remove()" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8">
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-            </svg>
-        </button>
-    </div>
-    {% endif %}
-
-    {% if message.tags == 'error' %}
-    <div id="toast-{{ forloop.counter }}" class="flex ml-64 mt-16 items-center w-full z-60 max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm" role="alert">
-        <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg">
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-            </svg>
+        <div class="flex-1 text-sm font-medium">
+            {{ message }}
         </div>
-        <div class="ms-3 text-sm font-normal">{{ message }}</div>
-        <button type="button" onclick="this.closest('div[id^=toast]').remove()" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8">
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-            </svg>
+        <button
+            onclick="closeToast('toast-{{ forloop.counter }}')"
+            class="opacity-50 hover:opacity-100 transition"
+        >
+            <i class="bi bi-x-lg"></i>
         </button>
-    </div>
-    {% endif %}
 
-{% endfor %}
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<style>
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-toast {
+    animation: toastIn 0.4s ease;
+}
+
+</style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('[id^="toast-"]').forEach(toast => {
+
+function closeToast(id) {
+
+    const toast = document.getElementById(id);
+
+    if (toast) {
+
+        toast.style.transition = 'all 0.5s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+
+        setTimeout(() => {
+            toast.remove();
+        }, 500);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    document.querySelectorAll('.toast-message').forEach((toast) => {
+
+        setTimeout(() => {
+
+            toast.style.transition = 'all 0.5s ease';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+
             setTimeout(() => {
-                toast.style.transition = 'opacity 0.5s ease';
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
-        });
+                toast.remove();
+            }, 500);
+
+        }, 3000);
+
     });
+
+});
+
 </script>
 
 {% endif %}

@@ -1,0 +1,18 @@
+<div class="d-flex">
+
+    <div class="sidebar bg-dark text-white p-3" style="width:250px; min-height:100vh;">
+        <h3>BrewStock</h3>
+
+        <ul class="nav flex-column">
+            <li><a href="#" class="nav-link text-white">Dashboard</a></li>
+            <li><a href="#" class="nav-link text-white">Inventory</a></li>
+            <li><a href="#" class="nav-link text-white">Suppliers</a></li>
+        </ul>
+    </div>
+
+    <div class="content grow p-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</div>

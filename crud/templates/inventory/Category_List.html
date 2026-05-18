@@ -4,28 +4,57 @@
 
 {% block content %}
 {% include "include/ToastMessage.html" %}
-<div class="section-header">
+
+<div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin:20px 0;">
   <h2>Categories</h2>
-  <a href="{% url 'category_create' %}" class="btn-brew"><i class="bi bi-plus-lg"></i> Add Category</a>
+  <a href="{% url 'category_create' %}" class="btn-brew">
+    <i class="bi bi-plus-lg"></i> Add Category
+  </a>
 </div>
+
 <div class="panel">
   <table class="brew-table">
-    <thead><tr><th>Name</th><th>Description</th><th>Items</th><th>Actions</th></tr></thead>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Items</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
     <tbody>
       {% for cat in categories %}
       <tr>
-        <td><strong>{{ cat.name }}</strong></td>
-        <td style="opacity:.65; font-size:.88rem;">{{ cat.description|default:"—"|truncatechars:60 }}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:12px;">
+            {% if cat.image %}
+              <img src="{{ cat.image.url }}"
+                   alt="{{ cat.name }}"
+                   width="44" height="44"
+                   style="object-fit:cover;border-radius:10px;border:2px solid var(--steam);flex-shrink:0;">
+            {% else %}
+              <div style="width:44px;height:44px;background:var(--foam);border-radius:10px;
+                          display:flex;align-items:center;justify-content:center;
+                          flex-shrink:0;border:2px solid var(--steam);opacity:.5;">
+                <i class="bi bi-tag" style="font-size:1rem;"></i>
+              </div>
+            {% endif %}
+            <strong>{{ cat.name }}</strong>
+          </div>
+        </td>
+        <td style="opacity:.65;font-size:.88rem;">{{ cat.description|default:"—"|truncatechars:60 }}</td>
         <td>{{ cat.item_count }}</td>
         <td>
-          <div style="display:flex; gap:6px;">
+          <div style="display:flex;gap:6px;">
             <a href="{% url 'category_edit' cat.pk %}" class="btn-brew sm outline"><i class="bi bi-pencil"></i></a>
             <a href="{% url 'category_delete' cat.pk %}" class="btn-brew sm danger"><i class="bi bi-trash"></i></a>
           </div>
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="4" style="text-align:center; padding:40px; opacity:.4;">No categories yet.</td></tr>
+      <tr>
+        <td colspan="4" style="text-align:center;padding:40px;opacity:.4;">No categories yet.</td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>

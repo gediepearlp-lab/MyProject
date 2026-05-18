@@ -8,7 +8,7 @@
 </div>
 <div class="form-card">
   <h2 style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:24px;">{{ title }}</h2>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in form %}
     <div class="mb-3">

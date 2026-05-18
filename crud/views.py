@@ -122,40 +122,72 @@ def item_list(request):
 
 @login_required
 def item_create(request):
-    form = InventoryItemForm(request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
-        item = form.save(commit=False)
-        item.created_by = request.user
-        item.save()
+    if request.method == 'POST':
 
-        messages.success(request, f'"{item.name}" added to inventory.')
-        return redirect('item_list')
+        form = InventoryItemForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            item = form.save(commit=False)
+            item.created_by = request.user
+            item.save()
+
+            messages.success(
+                request,
+                f'"{item.name}" added to inventory.'
+            )
+
+            return redirect('item_list')
+
+    else:
+
+        form = InventoryItemForm()
 
     return render(request, 'inventory/itemform.html', {
         'form': form,
         'title': 'Add Item'
     })
 
-
 @login_required
 def item_edit(request, pk):
-    item = get_object_or_404(InventoryItem, pk=pk)
 
-    form = InventoryItemForm(request.POST or None, instance=item)
+    item = get_object_or_404(
+        InventoryItem,
+        pk=pk
+    )
 
-    if request.method == 'POST' and form.is_valid():
-        form.save()
+    if request.method == 'POST':
 
-        messages.success(request, f'"{item.name}" updated.')
-        return redirect('item_list')
+        form = InventoryItemForm(
+            request.POST,
+            request.FILES,
+            instance=item
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                f'"{item.name}" updated.'
+            )
+
+            return redirect('item_list')
+
+    else:
+
+        form = InventoryItemForm(instance=item)
 
     return render(request, 'inventory/itemform.html', {
         'form': form,
         'title': 'Edit Item',
         'item': item
     })
-
 
 @login_required
 def item_delete(request, pk):
@@ -230,13 +262,28 @@ def category_list(request):
 
 @login_required
 def category_create(request):
-    form = CategoryForm(request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
-        form.save()
+    if request.method == 'POST':
 
-        messages.success(request, 'Category created.')
-        return redirect('category_list')
+        form = CategoryForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                'Category created.'
+            )
+
+            return redirect('category_list')
+
+    else:
+
+        form = CategoryForm()
 
     return render(request, 'inventory/category_form.html', {
         'form': form,
@@ -246,15 +293,31 @@ def category_create(request):
 
 @login_required
 def category_edit(request, pk):
+
     cat = get_object_or_404(Category, pk=pk)
 
-    form = CategoryForm(request.POST or None, instance=cat)
+    if request.method == 'POST':
 
-    if request.method == 'POST' and form.is_valid():
-        form.save()
+        form = CategoryForm(
+            request.POST,
+            request.FILES,
+            instance=cat
+        )
 
-        messages.success(request, 'Category updated.')
-        return redirect('category_list')
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                'Category updated.'
+            )
+
+            return redirect('category_list')
+
+    else:
+
+        form = CategoryForm(instance=cat)
 
     return render(request, 'inventory/category_form.html', {
         'form': form,
@@ -287,35 +350,63 @@ def supplier_list(request):
     return render(request, 'inventory/supplier_list.html', {
         'suppliers': suppliers
     })
-
-
 @login_required
 def supplier_create(request):
-    form = SupplierForm(request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
-        form.save()
+    if request.method == 'POST':
 
-        messages.success(request, 'Supplier added.')
-        return redirect('supplier_list')
+        form = SupplierForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                'Supplier added.'
+            )
+
+            return redirect('supplier_list')
+
+    else:
+
+        form = SupplierForm()
 
     return render(request, 'inventory/supplier_form.html', {
         'form': form,
         'title': 'Add Supplier'
     })
 
-
 @login_required
 def supplier_edit(request, pk):
+
     sup = get_object_or_404(Supplier, pk=pk)
 
-    form = SupplierForm(request.POST or None, instance=sup)
+    if request.method == 'POST':
 
-    if request.method == 'POST' and form.is_valid():
-        form.save()
+        form = SupplierForm(
+            request.POST,
+            request.FILES,
+            instance=sup
+        )
 
-        messages.success(request, 'Supplier updated.')
-        return redirect('supplier_list')
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                'Supplier updated.'
+            )
+
+            return redirect('supplier_list')
+
+    else:
+
+        form = SupplierForm(instance=sup)
 
     return render(request, 'inventory/supplier_form.html', {
         'form': form,

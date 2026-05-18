@@ -1,33 +1,64 @@
 {% extends 'base.html' %}
 {% block title %}Suppliers{% endblock %}
 {% block topbar_title %}Suppliers{% endblock %}
-{% include "include/ToastMessage.html" %}
 
 {% block content %}
-<div class="section-header">
+{% include "include/ToastMessage.html" %}
+
+<div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin:20px 0;">
   <h2>Suppliers</h2>
-  <a href="{% url 'supplier_create' %}" class="btn-brew"><i class="bi bi-plus-lg"></i> Add Supplier</a>
+  <a href="{% url 'supplier_create' %}" class="btn-brew">
+    <i class="bi bi-plus-lg"></i> Add Supplier
+  </a>
 </div>
+
 <div class="panel">
   <table class="brew-table">
-    <thead><tr><th>Supplier</th><th>Contact</th><th>Phone</th><th>Email</th><th>Items</th><th>Actions</th></tr></thead>
+    <thead>
+      <tr>
+        <th>Supplier</th>
+        <th>Contact</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Items</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
     <tbody>
       {% for sup in suppliers %}
       <tr>
-        <td><strong>{{ sup.name }}</strong></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:12px;">
+            {% if sup.image %}
+              <img src="{{ sup.image.url }}"
+                   alt="{{ sup.name }}"
+                   width="44" height="44"
+                   style="object-fit:cover;border-radius:50%;border:2px solid var(--steam);flex-shrink:0;">
+            {% else %}
+              <div style="width:44px;height:44px;background:var(--latte);border-radius:50%;
+                          display:flex;align-items:center;justify-content:center;
+                          flex-shrink:0;color:#fff;font-weight:700;font-size:.95rem;">
+                {{ sup.name|slice:":1"|upper }}
+              </div>
+            {% endif %}
+            <strong>{{ sup.name }}</strong>
+          </div>
+        </td>
         <td style="opacity:.7;">{{ sup.contact_person|default:"—" }}</td>
         <td style="opacity:.7;">{{ sup.phone|default:"—" }}</td>
-        <td style="opacity:.7; font-size:.85rem;">{{ sup.email|default:"—" }}</td>
+        <td style="opacity:.7;font-size:.85rem;">{{ sup.email|default:"—" }}</td>
         <td>{{ sup.item_count }}</td>
         <td>
-          <div style="display:flex; gap:6px;">
+          <div style="display:flex;gap:6px;">
             <a href="{% url 'supplier_edit' sup.pk %}" class="btn-brew sm outline"><i class="bi bi-pencil"></i></a>
             <a href="{% url 'supplier_delete' sup.pk %}" class="btn-brew sm danger"><i class="bi bi-trash"></i></a>
           </div>
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="6" style="text-align:center; padding:40px; opacity:.4;">No suppliers yet.</td></tr>
+      <tr>
+        <td colspan="6" style="text-align:center;padding:40px;opacity:.4;">No suppliers yet.</td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>

@@ -5,6 +5,7 @@
 {% block content %}
 {% include "include/ToastMessage.html" %}
 
+<!-- Stat Cards -->
 <div class="row g-3 mb-4">
   <div class="col-6 col-lg-3">
     <div class="stat-card">
@@ -37,45 +38,61 @@
 </div>
 
 <div class="row g-4">
-  <!-- Low Stock Alerts -->
+
+  <!-- Stock Alerts -->
   <div class="col-lg-6">
     <div class="panel">
       <div class="panel-header">
         <i class="bi bi-exclamation-triangle-fill text-warning"></i> Stock Alerts
       </div>
       {% if low_stock_items %}
-        <table class="brew-table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Qty</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in low_stock_items %}
-            <tr>
-              <td><strong>{{ item.name }}</strong><br><small style="opacity:.5;">{{ item.sku }}</small></td>
-              <td>{{ item.quantity }} {{ item.unit }}</td>
-              <td>
-                <span class="badge-status {{ item.status }}">
-                  <i class="bi bi-circle-fill" style="font-size:.5rem;"></i>
-                  {{ item.get_status_display|default:item.status|title|cut:"_" }}
-                </span>
-              </td>
-              <td>
-                <a href="{% url 'add_transaction' item.pk %}" class="btn-brew sm">Restock</a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <table class="brew-table">
+        <thead>
+          <tr><th>Item</th><th>Qty</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for item in low_stock_items %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                {% if item.image %}
+                  <img src="{{ item.image.url }}" alt="{{ item.name }}"
+                       width="38" height="38"
+                       style="object-fit:cover;border-radius:8px;border:2px solid var(--steam);flex-shrink:0;">
+                {% else %}
+                  <div style="width:38px;height:38px;background:var(--foam);border-radius:8px;
+                              display:flex;align-items:center;justify-content:center;
+                              flex-shrink:0;opacity:.5;border:2px solid var(--steam);">
+                    <i class="bi bi-image" style="font-size:.85rem;"></i>
+                  </div>
+                {% endif %}
+                <div>
+                  <strong>{{ item.name }}</strong><br>
+                  <small style="opacity:.5;">{{ item.sku }}</small>
+                </div>
+              </div>
+            </td>
+            <td>{{ item.quantity }} {{ item.unit }}</td>
+            <td>
+              <span class="badge-status {{ item.status }}">
+                <i class="bi bi-circle-fill" style="font-size:.5rem;"></i>
+                {% if item.status == 'in_stock' %}In Stock
+                {% elif item.status == 'low_stock' %}Low Stock
+                {% else %}Out of Stock{% endif %}
+              </span>
+            </td>
+            <td>
+              <a href="{% url 'add_transaction' item.pk %}" class="btn-brew sm">Restock</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
       {% else %}
-        <div style="padding:32px; text-align:center; opacity:.45; font-size:.9rem;">
-          <i class="bi bi-check-circle" style="font-size:2rem; display:block; margin-bottom:8px;"></i>
-          All stock levels are healthy!
-        </div>
+      <div style="padding:32px;text-align:center;opacity:.45;font-size:.9rem;">
+        <i class="bi bi-check-circle" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
+        All stock levels are healthy!
+      </div>
       {% endif %}
     </div>
   </div>
@@ -87,49 +104,82 @@
         <i class="bi bi-clock-history"></i> Recent Transactions
       </div>
       {% if recent_transactions %}
-        <table class="brew-table">
-          <thead>
-            <tr><th>Item</th><th>Type</th><th>Qty</th><th>By</th></tr>
-          </thead>
-          <tbody>
-            {% for txn in recent_transactions %}
-            <tr>
-              <td>{{ txn.item.name }}</td>
-              <td>
-                <span style="font-size:.78rem; padding:3px 8px; border-radius:4px; background:
-                  {% if txn.transaction_type == 'restock' %}#d4edda{% elif txn.transaction_type == 'usage' %}#fff3cd{% else %}#f8d7da{% endif %}; color:
-                  {% if txn.transaction_type == 'restock' %}#155724{% elif txn.transaction_type == 'usage' %}#856404{% else %}#721c24{% endif %};">
-                  {{ txn.get_transaction_type_display }}
-                </span>
-              </td>
-              <td>{{ txn.quantity }}</td>
-              <td style="opacity:.6; font-size:.82rem;">{{ txn.created_by.username|default:"—" }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <table class="brew-table">
+        <thead>
+          <tr><th>Item</th><th>Type</th><th>Qty</th><th>By</th></tr>
+        </thead>
+        <tbody>
+          {% for txn in recent_transactions %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                {% if txn.item.image %}
+                  <img src="{{ txn.item.image.url }}" alt="{{ txn.item.name }}"
+                       width="36" height="36"
+                       style="object-fit:cover;border-radius:8px;border:2px solid var(--steam);flex-shrink:0;">
+                {% else %}
+                  <div style="width:36px;height:36px;background:var(--foam);border-radius:8px;
+                              display:flex;align-items:center;justify-content:center;
+                              flex-shrink:0;opacity:.5;border:2px solid var(--steam);">
+                    <i class="bi bi-image" style="font-size:.8rem;"></i>
+                  </div>
+                {% endif %}
+                {{ txn.item.name }}
+              </div>
+            </td>
+            <td>
+              <span style="font-size:.78rem;padding:4px 8px;border-radius:6px;
+                background:{% if txn.transaction_type == 'restock' %}#d4edda{% elif txn.transaction_type == 'usage' %}#fff3cd{% else %}#f8d7da{% endif %};
+                color:{% if txn.transaction_type == 'restock' %}#155724{% elif txn.transaction_type == 'usage' %}#856404{% else %}#721c24{% endif %};">
+                {{ txn.get_transaction_type_display }}
+              </span>
+            </td>
+            <td>{{ txn.quantity }}</td>
+            <td style="opacity:.6;font-size:.82rem;">{{ txn.created_by.username|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
       {% else %}
-        <div style="padding:32px; text-align:center; opacity:.45; font-size:.9rem;">No transactions yet.</div>
+      <div style="padding:32px;text-align:center;opacity:.45;font-size:.9rem;">No transactions yet.</div>
       {% endif %}
     </div>
   </div>
 
-  <!-- Categories -->
+  <!-- Categories Overview -->
   <div class="col-12">
     <div class="panel">
-      <div class="panel-header"><i class="bi bi-tag-fill"></i> Categories Overview</div>
-      <div style="padding:20px; display:flex; flex-wrap:wrap; gap:12px;">
+      <div class="panel-header">
+        <i class="bi bi-tag-fill"></i> Categories Overview
+      </div>
+      <div style="padding:20px;display:flex;flex-wrap:wrap;gap:12px;">
         {% for cat in categories %}
-        <div style="background:var(--foam); border:1px solid var(--steam); border-radius:10px; padding:14px 20px; min-width:140px;">
-          <div style="font-weight:600; font-size:.9rem;">{{ cat.name }}</div>
-          <div style="font-size:1.6rem; font-family:'Playfair Display',serif; font-weight:700; color:var(--latte);">{{ cat.item_count }}</div>
-          <div style="font-size:.74rem; opacity:.5;">items</div>
+        <div style="background:var(--foam);border:1px solid var(--steam);border-radius:12px;
+                    padding:16px 20px;min-width:160px;display:flex;align-items:center;gap:12px;">
+          {% if cat.image %}
+            <img src="{{ cat.image.url }}" alt="{{ cat.name }}"
+                 width="40" height="40"
+                 style="object-fit:cover;border-radius:8px;flex-shrink:0;">
+          {% else %}
+            <div style="width:40px;height:40px;background:var(--steam);border-radius:8px;
+                        display:flex;align-items:center;justify-content:center;opacity:.6;flex-shrink:0;">
+              <i class="bi bi-tag"></i>
+            </div>
+          {% endif %}
+          <div>
+            <div style="font-weight:600;font-size:.92rem;">{{ cat.name }}</div>
+            <div style="font-size:1.8rem;font-family:'Playfair Display',serif;font-weight:700;color:var(--latte);line-height:1;">
+              {{ cat.item_count }}
+            </div>
+            <div style="font-size:.74rem;opacity:.5;">items</div>
+          </div>
         </div>
         {% empty %}
-        <p style="opacity:.5; font-size:.9rem;">No categories yet. <a href="{% url 'category_create' %}">Add one</a></p>
+        <p style="opacity:.5;font-size:.9rem;">No categories yet. <a href="{% url 'category_create' %}">Add one</a></p>
         {% endfor %}
       </div>
     </div>
   </div>
+
 </div>
 {% endblock %}

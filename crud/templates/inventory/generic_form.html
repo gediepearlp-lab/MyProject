@@ -12,54 +12,28 @@
 </div>
 
 <div class="form-card">
-  <h2 style="font-family:'Playfair Display',serif;
-             font-size:1.4rem;
-             font-weight:700;
-             margin-bottom:24px;">
-      {{ title }}
+  <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:24px;">
+    {{ title }}
   </h2>
 
   <form method="post" enctype="multipart/form-data">
-
     {% csrf_token %}
-
     {% for field in form %}
     <div class="mb-3">
-
-      <label class="form-label">
-        {{ field.label }}
-      </label>
-
+      <label class="form-label">{{ field.label }}</label>
       {{ field }}
-
       {% if field.errors %}
-        <small class="text-danger">
-          {{ field.errors|join:", " }}
-        </small>
+        <small class="text-danger">{{ field.errors|join:", " }}</small>
       {% endif %}
-
       {% if field.help_text %}
-        <small class="text-muted">
-          {{ field.help_text }}
-        </small>
+        <small class="text-muted">{{ field.help_text }}</small>
       {% endif %}
-
     </div>
     {% endfor %}
-
     <div class="d-flex gap-3 mt-4">
-
-      <button type="submit" class="btn-brew">
-        <i class="bi bi-check-lg"></i> Save
-      </button>
-
-      <a href="javascript:history.back()" class="btn-brew outline">
-        Cancel
-      </a>
-
+      <button type="submit" class="btn-brew"><i class="bi bi-check-lg"></i> Save</button>
+      <a href="javascript:history.back()" class="btn-brew outline">Cancel</a>
     </div>
-
   </form>
 </div>
-
 {% endblock %}
